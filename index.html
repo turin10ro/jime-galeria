@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jime | Portafolio Visual</title>
+    <meta name="description" content="Portafolio de fotografía y arte visual minimalista.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+    
+    <!-- Iconos (Lucide via CDN para ligereza) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-color: #FAFAFA;
+            --text-primary: #1A1A1A;
+            --text-secondary: #555555;
+            --accent-color: #000000;
+            --overlay-bg: rgba(255, 255, 255, 0.95);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            
+            --font-display: 'Cormorant Garmond', serif;
+            --font-body: 'Montserrat', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+
+        ul { list-style: none; }
+
+        /* --- TIPOGRAFÍA --- */
+        h1, h2, h3 {
+            font-family: var(--font-display);
+            font-weight: 400;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        /* --- UTILIDADES --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border: 1px solid var(--text-primary);
+            background: transparent;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background: var(--text-primary);
+            color: var(--bg-color);
+        }
+
+        /* ANIMACIONES DE ENTRADA (SCROLL) */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(250, 250, 250, 0.85);
+            backdrop-filter: blur(5px);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            line-height: 1;
+            margin-bottom: 20px;
+            opacity: 0; /* JS Animation trigger */
+            animation: heroFadeIn 1.5s ease forwards 0.5s;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            font-family: var(--font-display);
+            max-width: 600px;
+            opacity: 0;
+            animation: heroFadeIn 1.5s ease forwards 1s;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            animation: bounce 2s infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes heroFadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        /* --- GALLERY (MASONRY) --- */
+        .gallery-section {
+            padding: 100px 0;
+        }
+
+        .masonry-grid {
+            column-count: 3;
+            column-gap: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            margin-bottom: 20px;
+            break-inside: avoid;
+            cursor: zoom-in;
+            overflow: hidden;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.6s ease;
+            filter: grayscale(20%);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+            filter: grayscale(0%);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            pointer-events: none; /* Let clicks pass through to container */
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        /* --- ABOUT SECTION --- */
+        .about-section {
+            padding: 100px 0;
+            background-color: #f2f2f2;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+            font-weight: 300;
+            color: var(--text-secondary);
+        }
+
+        .about-text h2 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            filter: grayscale(100%);
+        }
+
+        /* --- CONTACT SECTION --- */
+        .contact-section {
+            padding: 120px 0;
+        }
+
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        form {
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            border-bottom-color: var(--text-primary);
+        }
+
+        .form-label {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            font-size: 0.9rem;
+            color: #999;
+            pointer-events: none;
+            transition: 0.3s ease all;
+        }
+
+        .form-input:focus ~ .form-label,
+        .form-input:valid ~ .form-label {
+            top: -15px;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 50px 0;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+
+        .social-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .social-links i {
+            color: var(--text-primary);
+            transition: color 0.3s;
+        }
+
+        .social-links i:hover {
+            color: #777;
+        }
+
+        /* --- LIGHTBOX --- */
+        .lightbox {
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--overlay-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-img {
+            max-width: 90%;
+            max-height: 85%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .lightbox.active .lightbox-img {
+            transform: scale(1);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        .lightbox-caption {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .masonry-grid {
+                column-count: 2;
+            }
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .masonry-grid {
+                column-count: 1;
+            }
+            .nav-links {
+                display: none; /* Simplificado para el ejemplo, idealmente un menú hamburguesa */
+            }
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+        }
+
+        /* --- DEVELOPER SECTION --- */
+        .developer-section {
+            padding: 80px 20px;
+            background-color: #fafafa;
+            border-top: 1px solid #eee;
+        }
+
+        .developer-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .developer-label {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .developer-name {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 15px;
+        }
+
+        .developer-description {
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+
+        .developer-link {
+            display: inline-block;
+            padding: 12px 36px;
+            border: 1px solid var(--text-primary);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: var(--transition);
+        }
+
+        .developer-link:hover {
+            background-color: var(--text-primary);
+            color: var(--bg-color);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navegación -->
+    <nav>
+        <div class="logo">JIME</div>
+        <div class="nav-links">
+            <a href="#galeria">Trabajo</a>
+            <a href="#sobre-mi">Bio</a>
+        </div>
+    </nav>
+
+    <!-- Lightbox (Modal) -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" aria-label="Cerrar"><i data-lucide="x" size="32"></i></button>
+        <img src="" alt="Vista ampliada" class="lightbox-img" id="lightbox-img">
+        <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <h1>Libertad<br>De Pertenecer</h1>
+        <p>No es solo estar en un lugar, es sentir que tus piezas por fin encajan y que ya no tienes que pedir permiso para estar ahí.</p>
+        <div class="scroll-indicator">
+            <i data-lucide="chevron-down" size="32"></i>
+        </div>
+    </header>
+
+    <!-- Galería Principal -->
+    <section id="galeria" class="gallery-section container">
+        <div class="masonry-grid" id="gallery-grid">
+            <!-- Las imágenes se cargan con JS para simular datos, pero aquí tienes la estructura estática -->
+            <figure class="gallery-item fade-in" data-caption="Soledad Urbana, 2025">
+                <img src="imgs/p1.jpeg" alt="Arte 1" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Geometría Natural, 2025">
+                <img src="imgs/p2.jpeg" alt="Arte 2" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Retrato en Gris, 2025">
+                <img src="imgs/p3.jpeg" alt="Arte 3" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Estructuras de Luz, 2025">
+                <img src="imgs/p4.jpeg" alt="Arte 4" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="El Paso del Tiempo, 2025">
+                <img src="imgs/p5.jpeg" alt="Arte 5" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Minimalismo Abstracto, 2025">
+                <img src="imgs/p6.jpeg" alt="Arte 6" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+             <figure class="gallery-item fade-in" data-caption="Sombras de la Tarde, 2025">
+                <img src="imgs/p7.jpeg" alt="Arte 7" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Reflejos, 2025">
+                <img src="imgs/p8.jpeg" alt="Arte 8" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Reflejos, 2025">
+                <img src="imgs/p9.jpeg" alt="Arte 9" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Soledad Urbana, 2025">
+                <img src="imgs/p10.jpeg" alt="Arte 10" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Geometría Natural, 2025">
+                <img src="imgs/p11.jpeg" alt="Arte 11" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Retrato en Gris, 2025">
+                <img src="imgs/p12.jpeg" alt="Arte 12" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Estructuras de Luz, 2025">
+                <img src="imgs/p13.jpeg" alt="Arte 13" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="El Paso del Tiempo, 2025">
+                <img src="imgs/p14.jpeg" alt="Arte 14" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Minimalismo Abstracto, 2025">
+                <img src="imgs/p15.jpeg" alt="Arte 15" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Soledad Urbana, 2025">
+                <img src="imgs/p16.jpeg" alt="Arte 16" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Geometría Natural, 2025">
+                <img src="imgs/p17.jpeg" alt="Arte 17" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Retrato en Gris, 2025">
+                <img src="imgs/p18.jpeg" alt="Arte 18" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Estructuras de Luz, 2025">
+                <img src="imgs/p19.jpeg" alt="Arte 19" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="El Paso del Tiempo, 2025">
+                <img src="imgs/p20.jpeg" alt="Arte 20" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+            <figure class="gallery-item fade-in" data-caption="Minimalismo Abstracto, 2025">
+                <img src="imgs/p21.jpeg" alt="Arte 21" loading="lazy">
+                <div class="gallery-overlay">Ver Obra</div>
+            </figure>
+        </div>
+    </section>
+
+    <!-- Sobre el Artista -->
+    <section id="sobre-mi" class="about-section">
+        <div class="container about-content">
+            <img src="imgs/artista.jpg" alt="Retrato Artista" class="about-image fade-in">
+            <div class="about-text fade-in">
+                <h2>La búsqueda de lo esencial</h2>
+                <p>El arte de Jime nace de la observación, la sensibilidad y la emoción. A través del dibujo y la pintura, explora formas, colores y atmósferas que invitan a detenerse y mirar con atención. Cada obra es un espacio donde lo intuitivo y lo expresivo se encuentran, dando lugar a imágenes que transmiten tanto calma como intensidad.</p>
+                <p>Esta galería reúne una selección de sus obras, pensadas para compartir su mirada artística y su pasión por el arte.</p>
+                <br>
+            </div>
+        </div>
+    </section>
+
+    <!-- DESARROLLADOR -->
+    <section class="developer-section">
+        <div class="developer-container">
+            <p class="developer-label">Sitio web desarrollado por</p>
+
+            <h3 class="developer-name">Turin Developer</h3>
+
+            <p class="developer-description">
+                Diseño y desarrollo web enfocado en experiencias visuales limpias,
+                funcionales y con identidad.
+            </p>
+
+            <a 
+                href="https://turin10ro.github.io/turin-developer/" 
+                target="_blank" 
+                class="developer-link"
+            >
+                Ver portafolio
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <h3>JIME</h3>
+            <div class="social-links">
+                <a href="https://www.instagram.com/jb_mars01"><i data-lucide="instagram"></i></a>
+            </div>
+            <p style="margin-top: 20px; font-size: 0.8rem; color: #999;">&copy; 2026 Jime. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Inicializar iconos
+        lucide.createIcons();
+
+        // 1. Manejo del Lightbox
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const closeBtn = document.querySelector('.lightbox-close');
+
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const imgSrc = item.querySelector('img').src;
+                // Usamos la versión de alta calidad si estuviera disponible, aquí reutilizamos la misma
+                const caption = item.getAttribute('data-caption');
+                
+                lightboxImg.src = imgSrc;
+                lightboxCaption.innerText = caption;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevenir scroll
+            });
+        });
+
+        const closeLightbox = () => {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            setTimeout(() => { lightboxImg.src = ''; }, 300); // Limpiar src después de la animación
+        };
+
+        closeBtn.addEventListener('click', closeLightbox);
+        
+        // Cerrar al hacer click fuera de la imagen
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+        });
+
+        // 2. Animaciones al hacer Scroll (Intersection Observer)
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Dejar de observar una vez animado
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 3. Formulario (Prevención de envío real)
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            
+            btn.innerText = "Enviado";
+            btn.style.backgroundColor = "var(--text-primary)";
+            btn.style.color = "white";
+            
+            setTimeout(() => {
+                e.target.reset();
+                btn.innerText = originalText;
+                btn.style.backgroundColor = "transparent";
+                btn.style.color = "var(--text-primary)";
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
